@@ -154,6 +154,7 @@ namespace realsense2_camera
         rclcpp::Service<realsense2_camera_msgs::srv::DeviceInfo>::SharedPtr _device_info_srv;
         std::shared_ptr<Parameters> _parameters;
         std::list<std::string> _parameters_names;
+        bool _emitter_on_off;
 
         void restartStaticTransformBroadcaster();
         void publishExtrinsicsTopic(const stream_index_pair& sip, const rs2_extrinsics& ex);

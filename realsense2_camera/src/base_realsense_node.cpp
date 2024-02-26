@@ -131,6 +131,8 @@ BaseRealSenseNode::BaseRealSenseNode(rclcpp::Node& node,
     _format[RS2_STREAM_INFRARED] = RS2_FORMAT_Y8;
 
     _monitor_options = {RS2_OPTION_ASIC_TEMPERATURE, RS2_OPTION_PROJECTOR_TEMPERATURE};
+
+    _emitter_on_off = _node.get_name() == std::string("camera3");
 }
 
 BaseRealSenseNode::~BaseRealSenseNode()
@@ -841,14 +843,52 @@ void BaseRealSenseNode::publishFrame(rs2::frame f, const rclcpp::Time& t,
                                      const bool is_publishMetadata)
 {
     ROS_DEBUG("publishFrame(...)");
-    if (f.get_profile().stream_type() == RS2_STREAM_INFRARED)
+    const auto profile = f.get_profile().stream_type();
+
+    bool is_emitter_on = false;
+    if (f.supports_frame_metadata(RS2_FRAME_METADATA_FRAME_EMITTER_MODE))
     {
-        if (f.get_frame_metadata(RS2_FRAME_METADATA_FRAME_EMITTER_MODE) > 0)
+        is_emitter_on = f.get_frame_metadata(RS2_FRAME_METADATA_FRAME_EMITTER_MODE) > 0;
+    }
+    if (!_emitter_on_off)
+    {
+        if (profile == RS2_STREAM_INFRARED)
         {
-            // Do not publish
-            return;
+            if (is_emitter_on)
+            {
+                // Do not publish infra if emitter was On
+                return;
+            }
+        }
+        else if (profile == RS2_STREAM_DEPTH)
+        {
+            if (!is_emitter_on)
+            {
+                // Do not publish depth if emitter was not On
+                return;
+            }
         }
     }
+    else
+    {
+        if (profile == RS2_STREAM_INFRARED)
+        {
+            if (!is_emitter_on)
+            {
+                // Do not publish infra if emitter was On
+                return;
+            }
+        }
+        else if (profile == RS2_STREAM_DEPTH)
+        {
+            if (is_emitter_on)
+            {
+                // Do not publish depth if emitter was not On
+                return;
+            }
+        }
+    }
+
     unsigned int width = 0;
     unsigned int height = 0;
     unsigned int bpp = 1;
