@@ -20,6 +20,7 @@
 #include <condition_variable>
 #include <signal.h>
 #include <thread>
+#include <chrono>
 #ifndef _WIN32
 #include <sys/time.h>
 #endif
@@ -192,6 +193,8 @@ void RealSenseNodeFactory::getDevice(rs2::device_list list)
         {
             ROS_INFO("Resetting device...");
             _device.hardware_reset();
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(5000ms);
             _device = rs2::device();
             
         }

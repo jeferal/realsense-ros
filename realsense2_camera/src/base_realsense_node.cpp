@@ -841,6 +841,14 @@ void BaseRealSenseNode::publishFrame(rs2::frame f, const rclcpp::Time& t,
                                      const bool is_publishMetadata)
 {
     ROS_DEBUG("publishFrame(...)");
+    if (f.get_profile().stream_type() == RS2_STREAM_INFRARED)
+    {
+        if (f.get_frame_metadata(RS2_FRAME_METADATA_FRAME_EMITTER_MODE) > 0)
+        {
+            // Do not publish
+            return;
+        }
+    }
     unsigned int width = 0;
     unsigned int height = 0;
     unsigned int bpp = 1;

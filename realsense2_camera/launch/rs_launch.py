@@ -73,6 +73,10 @@ configurable_parameters = [{'name': 'camera_name',                  'default': '
                            {'name': 'hdr_merge.enable',             'default': 'false', 'description': 'hdr_merge filter enablement flag'},
                            {'name': 'wait_for_device_timeout',      'default': '-1.', 'description': 'Timeout for waiting for device to connect (Seconds)'},
                            {'name': 'reconnect_timeout',            'default': '6.', 'description': 'Timeout(seconds) between consequtive reconnection attempts'},
+                           {'name': 'depth_module.output_trigger_enabled', 'default': 'false', 'description': 'Generate trigger from the camera to external device once per frame'},
+                           {'name': 'depth_module.inter_cam_sync_mode', 'default': '0', 'description': 'Inter-camera synchronization mode: 0:Default, 1:Master, 2:Slave, 3:Full Salve, 4-258:Genlock with burst count of 1-255 frames for each trigger, 259 and 260 for two frames per trigger with laser ON-OFF and OFF-ON.'},
+                           {'name': 'depth_module.emitter_always_on', 'default': '0', 'description': 'Emitter always on mode: 0:disabled(default), 1:enabled'},
+                           {'name': 'depth_module.emitter_on_off', 'default': '0', 'description': 'Alternating emitter pattern, toggled on/off on per-frame basis'}
                           ]
 
 def declare_configurable_parameters(parameters):
